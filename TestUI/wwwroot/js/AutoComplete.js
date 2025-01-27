@@ -111,9 +111,11 @@ export class AutoComplete {
                     self.fetchServerData(val); // Call the fetchServerData after the delay
                 }, self.searchDelay); // 300ms delay
             }
-        }).on('focusout', SEARCH_INPUT_SELECTOR, function (e) {
-            // Restore the initial value for the specific input if no selection is made
+        }).on('blur', SEARCH_INPUT_SELECTOR, function (e) {
+            /*// Restore the initial value for the specific input if no selection is made
             let $this = $(this);
+            console.log(e);
+            console.log("lost focus: " + $(this).val());
 
             if (!self.isItemSelected) return;
 
@@ -126,8 +128,27 @@ export class AutoComplete {
                     self.renderListItems(self.filteredItems, false);
                 }
 
-            }, 125);
+            }, 125);*/
         });
+
+        this.$dropdown.on('hide.bs.dropdown', function () {
+            if (self.isItemSelected) {
+                let selectedDisplayVal = self.selectedDisplayVal;
+                let searchVal = self.$searchInput.val();
+                if (searchVal.trim().toLowerCase() !== selectedDisplayVal.trim().toLowerCase()) {
+                    self.$searchInput.val(selectedDisplayVal);
+
+                    if (!self.isServerFetching) {
+                        self.searchList(selectedDisplayVal, false);
+                    } else {
+                        self.renderListItems([self.selectedItem], false);
+                    }
+                }
+            } else {
+                self.$searchInput.val('');
+            }
+      
+        })
 
         this.$dropdownMenu.on('click', DROPDOWN_ITEM_SELECTOR, function () {
             let $el = $(this); // The selected item
@@ -291,9 +312,16 @@ export class AutoComplete {
      */
     selectItem($el) {
         let displayVal = $el.text().trim();
+        if (this.selectedDisplayVal === displayVal) return;
+        this.selectedDisplayVal = displayVal;
+        let selectedIndex = $el.attr('data-index');
+        this.isItemSelected = true;
+
         if ($el.attr('data-from-server') == 'false' || $el.attr('data-from-server') == false) {
+            this.selectedItem = this.items[selectedIndex]
             this.filteredItems = this.items.filter(item => item[this.itemDisplayProp] === displayVal);
         } else {
+            this.selectedItem = this.filteredItems[selectedIndex];
             this.filteredItems = this.filteredItems.filter(item => item[this.itemDisplayProp] === displayVal)
         }
 
@@ -302,7 +330,6 @@ export class AutoComplete {
         $el.find('.check-icon').show();
         this.$input.val($el.data("value"));
         this.$clearButton.removeClass('d-none');
-        this.selectedDisplayVal = displayVal;
         this.$input.trigger('input');
         this.$input.trigger('change');
 
@@ -313,6 +340,8 @@ export class AutoComplete {
      * Clears the selected item.
      */
     clearSelectedItem() {
+        this.selectedItem = null;
+        this.isItemSelected = false;
         this.filteredItems = [];
         this.selectedDisplayVal = '';
         this.$searchInput.val('');
