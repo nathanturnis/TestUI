@@ -1,0 +1,52 @@
+@using TestUI.UI
+@using TestUI.Components.AutoComplete
+
+@model AutoComplete
+
+<div class="dropdown nt-autocomplete-dropdown" id="AutoComplete_@Model.Id">
+    <input type="hidden" name="@Model.Id" id="@Model.Id" class="nt-autocomplete-value" />
+
+    @if (Model.FloatingLabel)
+    {
+        <div class="d-none nt-autocomplete-hidden-toggle dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false" data-bs-reference="parent"></div>
+
+        <div class="form-floating d-flex align-items-center">
+            <input class="form-control dropdown-toggle nt-autocomplete-input" type="text" id="@Model.UniqueId"
+                   placeholder="@Model.Placeholder" disabled="@Model.Disabled" />
+            <label for="@Model.UniqueId"><i class="@Model.StartIcon"></i> @Model.Label</label>
+            <button type="button" class="btn btn-sm shadow-bone nt-autocomplete-clear-button d-none" disabled="@Model.Disabled"><i class="bi bi-x-lg"></i></button>
+            <button type="button" class="btn btn-sm shadow-none nt-autocomplete-toggle-button" disabled="@Model.Disabled"><i class="bi bi-chevron-down"></i></button>
+        </div>
+    }
+    else
+    {
+        @if (!string.IsNullOrWhiteSpace(Model.Label))
+        {
+            <label class="form-label" for="@Model.UniqueId">@Model.Label</label>
+        }
+
+        <div class="d-none nt-autocomplete-hidden-toggle dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false" data-bs-reference="parent"></div>
+        <div class="d-flex align-items-center">
+            @if (!string.IsNullOrWhiteSpace(Model.StartIcon))
+            {
+                <div class="nt-autocomplete-start-icon"><i class="@Model.StartIcon"></i></div>
+            }
+            <input class="form-control @GetInputSize() nt-autocomplete-input" type="text" id="@Model.UniqueId"
+                   placeholder="@Model.Placeholder" disabled="@Model.Disabled" />
+            <button type="button" class="btn btn-sm shadow-bone nt-autocomplete-clear-button d-none" disabled="@Model.Disabled"><i class="bi bi-x-lg"></i></button>
+            <button type="button" class="btn btn-sm shadow-none nt-autocomplete-toggle-button"  disabled="@Model.Disabled"><i class="bi bi-chevron-down"></i></button>
+        </div>
+
+    }
+    <div class="dropdown-menu w-100 shadow-sm nt-autocomplete-dropdown-menu">
+        <div class="nt-autocomplete-list-content">
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetInputSize()
+    {
+        return Model.Size == ComponentSize.Small ? "form-control-sm" : Model.Size == ComponentSize.Large ? "form-control-lg" : "";
+    }
+}
