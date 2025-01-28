@@ -8,6 +8,11 @@ using TestUI.UI;
 namespace TestUI.Components.AutoComplete
 {
 
+    /// <summary>
+    /// An AutoComplete component for searching and selecting items.
+    /// Built and styled using Bootstrap.
+    /// </summary>
+    /// <param name="htmlHelper"></param>
     [JsonObject(MemberSerialization.OptIn)]
     [HtmlTargetElement("nt-autocomplete")]
     public class AutoComplete(IHtmlHelper htmlHelper) : NtBaseTag(htmlHelper)
@@ -18,7 +23,7 @@ namespace TestUI.Components.AutoComplete
 
         /// <summary>
         /// A list of items to bind this autocomplete to.
-        /// Required.
+        /// Required when no SearchUrl is applied.
         /// </summary>
         [JsonProperty]
         public IEnumerable<object>? Items { get; set; }

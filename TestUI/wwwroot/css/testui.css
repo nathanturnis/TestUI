@@ -56,14 +56,14 @@
     }
 
 .nt-autocomplete-input {
-    padding-right: 5rem;
+    padding-right: 5rem !important;
 }
 
 html[data-bs-theme="light"] .nt-autocomplete-dropdown-item:hover {
     background-color: #eee !important;
 }
 
-.nt-autocomplete-dropdown-item {
+.nt-autocomplete-dropdown-item-text {
     overflow: hidden;
     text-overflow: ellipsis;
 }

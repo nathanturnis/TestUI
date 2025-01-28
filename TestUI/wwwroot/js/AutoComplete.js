@@ -239,8 +239,8 @@ export class AutoComplete {
             let val = item[valueProp];
             let display = item[displayProp];
 
-            html += `<div class="dropdown-item py-1 ${DROPDOWN_ITEM_CLASS}" data-value="${val}" data-from-server="${isFromServer}" data-index="${startIndex + index}" style="cursor: pointer; ">
-                                ${display}
+            html += `<div class="dropdown-item py-1 d-flex justify-content-between ${DROPDOWN_ITEM_CLASS}" data-value="${val}" data-from-server="${isFromServer}" data-index="${startIndex + index}" style="cursor: pointer; ">
+                                <span class="nt-autocomplete-dropdown-item-text">${display}</span>
                                 <span class="float-end check-icon" style="${input.val() == val ? "" : "display: none"}"><i class="bi bi-check-lg"></i></span>
                             </div>`
 
@@ -341,6 +341,7 @@ export class AutoComplete {
     /**
      * Fetches data from the server and updates the list.
      * @param {any} val Search string
+     * @param {any} showDropdown Whether to show the dropdown
      */
     fetchServerData(val, showDropdown = true) {
         let self = this;
@@ -355,7 +356,7 @@ export class AutoComplete {
             dataType: "json", // Expected response type
             data: { searchVal: val },
             success: function (response) {
-                if (searchVersion === self.currentSearchVersion) {
+                if (searchVersion === self.currentSearchVersion && self.isDropdownOpen()) {
                     if (self.fetchServerOnLoad && self.items == null) {
                         self.items = response;
                         self.lowerListPropertyNames();
@@ -441,6 +442,7 @@ export class AutoComplete {
             this.itemHeight = $firstItem.outerHeight(); // Get the height of the first visible item
         }
 
+        // Calculate the top and bottom padding of the container, providing an illusion of scroll.
         let dataSize = this.isServerFetching ? this.filteredItems.length : this.items.length;
         const endIndex = Math.min((parseInt(this.$dropdownMenu.css('max-height')) / (this.itemHeight === undefined ? DEFAULT_ITEM_HEIGHT : this.itemHeight)) + 3, dataSize);
         const topPadding = 0;
