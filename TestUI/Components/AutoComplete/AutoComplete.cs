@@ -75,6 +75,13 @@ namespace TestUI.Components.AutoComplete
         public string? SearchUrl { get; set; }
 
         /// <summary>
+        /// If true, when the component is initialized a call is made to SearchUrl with an empty value.
+        /// Default false.
+        /// </summary>
+        [JsonProperty]
+        public bool FetchServerOnLoad { get; set; }
+
+        /// <summary>
         /// The amount of time in milliseconds from when input is received to when the search is made.
         /// 150ms default.
         /// </summary>
@@ -98,9 +105,10 @@ namespace TestUI.Components.AutoComplete
                 throw new ArgumentNullException(nameof(ValueProperty), "Must provide a value property.");
 
             if (string.IsNullOrWhiteSpace(DisplayProperty))
-            {
                 DisplayProperty = ValueProperty;
-            }
+
+            if (!string.IsNullOrWhiteSpace(SearchUrl) && Items != null)
+                Items = null;
 
             if (Items != null)
             {
@@ -110,11 +118,11 @@ namespace TestUI.Components.AutoComplete
                     throw new ArgumentException(paramName: nameof(ValueProperty), message: $"Could find property of name {ValueProperty} in type {listType}");
 
                 else if (listType.GetProperty(DisplayProperty) == null)
-                {
                     throw new ArgumentException(paramName: nameof(DisplayProperty), message: $"Could find property of name {DisplayProperty} in type {listType}");
-                }
             }
 
+            if(FetchServerOnLoad && string.IsNullOrWhiteSpace(SearchUrl))
+                FetchServerOnLoad = false;
             
 
             ((IViewContextAware)_html).Contextualize(ViewContext);

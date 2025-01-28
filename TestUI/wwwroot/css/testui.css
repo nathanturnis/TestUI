@@ -62,3 +62,8 @@
 html[data-bs-theme="light"] .nt-autocomplete-dropdown-item:hover {
     background-color: #eee !important;
 }
+
+.nt-autocomplete-dropdown-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -19,31 +19,33 @@ const DEFAULT_ITEM_HEIGHT = 32;
 
 export class AutoComplete {
     constructor(config) {
-        console.log(`new autocomplete ${config.Id}`)
-        console.log(config);
-
         this.id = config.Id;
-        if (config.Items == null) config.Items = [];
         this.items = config.Items;
         this.virtualize = config.Virtualize;
         this.filteredItems = [];
 
-        this.lowerListPropertyNames();
+        if (config.Items != null) this.lowerListPropertyNames();
 
         this.itemValProp = config.ValueProperty.toLowerCase();
         this.itemDisplayProp = config.DisplayProperty.toLowerCase();
         this.searchUrl = config.SearchUrl;
         this.isServerFetching = this.searchUrl != null && this.searchUrl.trim() !== '';
         this.searchDelay = config.SearchDelay;
-        this.itemsFromServer = false;
 
         this.initializeElements()
 
-        if (this.virtualize) {
-            this.filteredItems = this.items;
-            this.renderVirtualizedItems(0, false);
+        if (!this.isServerFetching) {
+            if (this.virtualize) {
+                this.filteredItems = this.items;
+                this.renderVirtualizedItems(0, false);
+            } else {
+                this.renderListItems(this.items, false)
+            }
+        } else if (config.FetchServerOnLoad) {
+            this.fetchServerOnLoad = true;
+            this.fetchServerData('', false);
         } else {
-            this.renderListItems(this.items, false)
+            this.renderListItems([], false);
         }
 
         this.initializeListeners();
@@ -86,16 +88,11 @@ export class AutoComplete {
                 return;
             }
 
+            if (self.isServerFetching && !self.fetchServerOnLoad && self.items == null) return;
+
             let val = $(this).val() // Get the input value
             if (!self.isServerFetching) {
                 self.searchList(val, !needToCloseDropdown)
-            } else {
-                if (self.items.length <= 0 || (self.selectedDisplayVal != null && self.selectedDisplayVal != '')) {
-                    return;
-                } else {
-                    self.itemsFromServer = false;
-                    self.renderListItems(self.items, false);
-                }
             }
 
             if (!needToCloseDropdown) self.showDropdown();
@@ -111,24 +108,6 @@ export class AutoComplete {
                     self.fetchServerData(val); // Call the fetchServerData after the delay
                 }, self.searchDelay); // 300ms delay
             }
-        }).on('blur', SEARCH_INPUT_SELECTOR, function (e) {
-            /*// Restore the initial value for the specific input if no selection is made
-            let $this = $(this);
-            console.log(e);
-            console.log("lost focus: " + $(this).val());
-
-            if (!self.isItemSelected) return;
-
-            let timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                if ($this.val().trim().toLowerCase() !== self.selectedDisplayVal.trim().toLowerCase()) {
-                    $this.val(self.selectedDisplayVal); // Restore the specific initial value
-                    self.filteredItems = self.items.filter(item => item[self.itemDisplayProp] == self.selectedDisplayVal);
-                    self.renderListItems(self.filteredItems, false);
-                }
-
-            }, 125);*/
         });
 
         this.$dropdown.on('hide.bs.dropdown', function () {
@@ -138,14 +117,21 @@ export class AutoComplete {
                 if (searchVal.trim().toLowerCase() !== selectedDisplayVal.trim().toLowerCase()) {
                     self.$searchInput.val(selectedDisplayVal);
 
-                    if (!self.isServerFetching) {
-                        self.searchList(selectedDisplayVal, false);
-                    } else {
-                        self.renderListItems([self.selectedItem], false);
-                    }
+                    self.renderListItems([self.selectedItem], false);
                 }
             } else {
                 self.$searchInput.val('');
+
+                if (!self.isServerFetching) {
+                    self.searchList('', false)
+                } else {
+                    if (self.virtualize) {
+                        self.filteredItems = self.items || [];
+                        self.renderVirtualizedItems(0, true);
+                    } else {
+                        self.renderListItems(self.items || [], false)
+                    }
+                }
             }
       
         })
@@ -233,8 +219,7 @@ export class AutoComplete {
      * @param {any} isFromServer Whether or not these items are from a remote source.
      * @returns
      */
-    renderListItems(visibleItems, isFromServer) {
-        // console.log(visibleItems)
+    renderListItems(visibleItems, isFromServer, startIndex = 0) {
         if (visibleItems.length <= 0) {
             this.$itemsContainer.html(this.getNoResultsFoundHtml());
             return;
@@ -254,7 +239,7 @@ export class AutoComplete {
             let val = item[valueProp];
             let display = item[displayProp];
 
-            html += `<div class="dropdown-item py-1 ${DROPDOWN_ITEM_CLASS}" data-value="${val}" data-from-server="${isFromServer}" data-index="${index}" style="cursor: pointer; ">
+            html += `<div class="dropdown-item py-1 ${DROPDOWN_ITEM_CLASS}" data-value="${val}" data-from-server="${isFromServer}" data-index="${startIndex + index}" style="cursor: pointer; ">
                                 ${display}
                                 <span class="float-end check-icon" style="${input.val() == val ? "" : "display: none"}"><i class="bi bi-check-lg"></i></span>
                             </div>`
@@ -312,7 +297,6 @@ export class AutoComplete {
      */
     selectItem($el) {
         let displayVal = $el.text().trim();
-        if (this.selectedDisplayVal === displayVal) return;
         this.selectedDisplayVal = displayVal;
         let selectedIndex = $el.attr('data-index');
         this.isItemSelected = true;
@@ -358,10 +342,10 @@ export class AutoComplete {
      * Fetches data from the server and updates the list.
      * @param {any} val Search string
      */
-    fetchServerData(val) {
+    fetchServerData(val, showDropdown = true) {
         let self = this;
         this.$dropdownMenu.find(ITEMS_CONTAINER_SELECTOR).html(this.getLoadingHtml())
-        self.showDropdown();
+        if (showDropdown) self.showDropdown();
 
         this.currentSearchVersion = (this.currentSearchVersion || 0) + 1;
         const searchVersion = this.currentSearchVersion;
@@ -371,8 +355,12 @@ export class AutoComplete {
             dataType: "json", // Expected response type
             data: { searchVal: val },
             success: function (response) {
-                self.itemsFromServer = true;
                 if (searchVersion === self.currentSearchVersion) {
+                    if (self.fetchServerOnLoad && self.items == null) {
+                        self.items = response;
+                        self.lowerListPropertyNames();
+                    }
+
                     self.filteredItems = response;
                     self.lowerFilteredPropertyNames()
 
@@ -381,7 +369,8 @@ export class AutoComplete {
                     } else {
                         self.renderListItems(self.filteredItems, true);
                     }
-                    self.showDropdown();
+
+                    if (showDropdown) self.showDropdown();
                 }
             },
             error: function (xhr, status, error) {
@@ -399,7 +388,7 @@ export class AutoComplete {
         const scrollTop = this.$itemsContainer.scrollTop();
         const startIndex = Math.floor(scrollTop / this.itemHeight);
 
-        this.renderVirtualizedItems(startIndex, this.itemsFromServer);
+        this.renderVirtualizedItems(startIndex, this.isServerFetching);
     }
 
     /**
@@ -412,22 +401,15 @@ export class AutoComplete {
         let dataSize = isFromServer ? this.filteredItems.length : this.items.length;
         const endIndex = Math.min(startIndex + (parseInt(this.$dropdownMenu.css('max-height')) / (this.itemHeight === undefined ? DEFAULT_ITEM_HEIGHT : this.itemHeight)) + 3, dataSize);
 
-        let virtualizeInitialItems = this.items.length > 0 && this.isServerFetching && !isFromServer;
-
-        let visibleItems;
-        if (virtualizeInitialItems) {
-            visibleItems = this.items.slice(startIndex, endIndex)
-        } else {
-            visibleItems = this.filteredItems.slice(startIndex, endIndex);
-        }
+        let visibleItems = this.filteredItems.slice(startIndex, endIndex);
 
         this.$itemsContainer.empty(); // Clear current items
 
-        this.renderListItems(visibleItems, isFromServer);
+        this.renderListItems(visibleItems, isFromServer, startIndex);
 
         // Add padding for invisible items
         const topPadding = startIndex * this.itemHeight;
-        const bottomPadding = ((virtualizeInitialItems ? this.items.length : this.filteredItems.length) - endIndex) * this.itemHeight;
+        const bottomPadding = (this.filteredItems.length - endIndex) * this.itemHeight;
         this.$itemsContainer.prepend(`<div style="height: ${topPadding}px;"></div>`);
         this.$itemsContainer.append(`<div style="height: ${bottomPadding}px;"></div>`);
     }
@@ -436,10 +418,9 @@ export class AutoComplete {
      * Refresh the virtualized container.
      */
     refreshVirtualization() {
-        console.log(this.$itemsContainer)
         const scrollTop = this.$itemsContainer.scrollTop();
         const startIndex = Math.floor(scrollTop / this.itemHeight);
-        this.renderVirtualizedItems(startIndex, this.itemsFromServer);
+        this.renderVirtualizedItems(startIndex, this.isServerFetching);
     }
 
     /**
@@ -459,6 +440,13 @@ export class AutoComplete {
         } else {
             this.itemHeight = $firstItem.outerHeight(); // Get the height of the first visible item
         }
+
+        let dataSize = this.isServerFetching ? this.filteredItems.length : this.items.length;
+        const endIndex = Math.min((parseInt(this.$dropdownMenu.css('max-height')) / (this.itemHeight === undefined ? DEFAULT_ITEM_HEIGHT : this.itemHeight)) + 3, dataSize);
+        const topPadding = 0;
+        const bottomPadding = (this.filteredItems.length - endIndex) * this.itemHeight;
+        this.$itemsContainer.prepend(`<div style="height: ${topPadding}px;"></div>`);
+        this.$itemsContainer.append(`<div style="height: ${bottomPadding}px;"></div>`);
     }
 
     // #endregion
