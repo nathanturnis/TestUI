@@ -14,7 +14,7 @@ namespace TestUI.Components.AutoComplete
     /// </summary>
     /// <param name="htmlHelper"></param>
     [JsonObject(MemberSerialization.OptIn)]
-    [HtmlTargetElement("nt-autocomplete")]
+    [HtmlTargetElement("nt-autocomplete", TagStructure = TagStructure.WithoutEndTag)]
     public class AutoComplete(IHtmlHelper htmlHelper) : NtBaseTag(htmlHelper)
     {
 
@@ -140,6 +140,7 @@ namespace TestUI.Components.AutoComplete
 
             ((IViewContextAware)_html).Contextualize(ViewContext);
             output.TagName = "div";
+            output.TagMode = TagMode.StartTagAndEndTag;
 
             UniqueId = context.UniqueId;
 
