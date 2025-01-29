@@ -52,7 +52,7 @@ namespace TestUI.Components
         }
 
         private string GetScriptString()
-        {            
+        {
             return $"{ClassName}({JsonConvert.SerializeObject(this)})";
         }
     }

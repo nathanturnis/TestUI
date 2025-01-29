@@ -1,0 +1,69 @@
+.nt-autocomplete-textbox::after {
+    display: none;
+}
+
+.nt-autocomplete-dropdown-menu {
+    max-height: 330px;
+}
+
+.nt-autocomplete-list-content {
+    max-height: 315px;
+    overflow-y: auto;
+}
+
+.nt-autocomplete-toggle-button {
+    position: absolute;
+    right: 7px;
+    border-radius: 9999px;
+}
+
+    .nt-autocomplete-toggle-button:hover {
+        background-color: #e4e4e47d;
+    }
+
+    .nt-autocomplete-toggle-button:disabled, .nt-autocomplete-clear-button:disabled {
+        border: none;
+    }
+
+.nt-autocomplete-hidden-toggle.show + div .nt-autocomplete-toggle-button > .bi::before {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    transition: transform 0.25s ease; /* Add transition */
+}
+
+.nt-autocomplete-toggle-button > .bi::before {
+    transition: transform 0.25s ease; /* Ensure transition applies when returning to the original state */
+}
+
+.nt-autocomplete-clear-button {
+    position: absolute;
+    right: 39px;
+    border-radius: 9999px;
+}
+
+    .nt-autocomplete-clear-button:hover {
+        background-color: #e4e4e47d;
+    }
+
+.nt-autocomplete-start-icon {
+    position: absolute;
+    left: 10px;
+}
+
+    .nt-autocomplete-start-icon + .nt-autocomplete-input {
+        padding-left: 2.25rem;
+    }
+
+.nt-autocomplete-input {
+    padding-right: 5rem !important;
+}
+
+html[data-bs-theme="light"] .nt-autocomplete-dropdown-item:hover {
+    background-color: #eee !important;
+}
+
+.nt-autocomplete-dropdown-item-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

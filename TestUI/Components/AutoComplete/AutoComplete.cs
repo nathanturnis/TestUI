@@ -26,7 +26,7 @@ namespace TestUI.Components.AutoComplete
         /// Required when no SearchUrl is applied.
         /// </summary>
         [JsonProperty]
-        public IEnumerable<object>? Items { get; set; }
+        public object? Items { get; set; }
 
         /// <summary>
         /// The property for which to each item will display.
@@ -36,7 +36,6 @@ namespace TestUI.Components.AutoComplete
 
         /// <summary>
         /// The property for which each item's value is set to. This is the value sent upon form submission.
-        /// Required.
         /// </summary>
         [JsonProperty]
         public string? ValueProperty { get; set; }
@@ -106,24 +105,33 @@ namespace TestUI.Components.AutoComplete
                 throw new ArgumentNullException(nameof(Id), "Id is a required property.");
             if (Items == null && string.IsNullOrWhiteSpace(SearchUrl))
                 throw new ArgumentNullException(nameof(Items), "Items is a required property.");
-            if (string.IsNullOrWhiteSpace(ValueProperty))
-                throw new ArgumentNullException(nameof(ValueProperty), "Must provide a value property.");
-
-            if (string.IsNullOrWhiteSpace(DisplayProperty))
-                DisplayProperty = ValueProperty;
 
             if (!string.IsNullOrWhiteSpace(SearchUrl) && Items != null)
                 Items = null;
 
             if (Items != null)
             {
-                var listType = Items.GetType().GetGenericArguments().Single();
+                if (Items is not System.Collections.IEnumerable)
+                    throw new ArgumentException(paramName: nameof(Items), message: "Items must be an implementation of System.Collections.IEnumerable");
 
-                if (listType.GetProperty(ValueProperty) == null)
-                    throw new ArgumentException(paramName: nameof(ValueProperty), message: $"Could find property of name {ValueProperty} in type {listType}");
+                var isBasicType = Items.GetType().GetGenericArguments().Single().IsPrimitive || Items.GetType().GetGenericArguments().Single() == typeof(string);
 
-                else if (listType.GetProperty(DisplayProperty) == null)
-                    throw new ArgumentException(paramName: nameof(DisplayProperty), message: $"Could find property of name {DisplayProperty} in type {listType}");
+                if (!isBasicType)
+                {
+                    if (string.IsNullOrWhiteSpace(ValueProperty))
+                        throw new ArgumentNullException(nameof(ValueProperty), "Must provide a value property.");
+
+                    if (string.IsNullOrWhiteSpace(DisplayProperty))
+                        DisplayProperty = ValueProperty;
+
+                    var listType = Items.GetType().GetGenericArguments().Single();
+
+                    if (listType.GetProperty(ValueProperty) == null)
+                        throw new ArgumentException(paramName: nameof(ValueProperty), message: $"Could find property of name {ValueProperty} in type {listType}");
+
+                    else if (listType.GetProperty(DisplayProperty) == null)
+                        throw new ArgumentException(paramName: nameof(DisplayProperty), message: $"Could find property of name {DisplayProperty} in type {listType}");
+                }
             }
 
             if(FetchServerOnLoad && string.IsNullOrWhiteSpace(SearchUrl))

@@ -24,4 +24,12 @@
 		<EmbeddedResource Include="wwwroot\**\*" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Content Remove="wwwroot\css\AutoComplete.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="wwwroot\css\AutoComplete.css" />
+	</ItemGroup>
+
 </Project>

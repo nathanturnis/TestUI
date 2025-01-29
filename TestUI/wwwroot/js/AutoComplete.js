@@ -16,18 +16,18 @@ const DROPDOWN_ITEM_SELECTOR = "." + DROPDOWN_ITEM_CLASS;
 
 const DEFAULT_ITEM_HEIGHT = 32;
 
-
 export class AutoComplete {
     constructor(config) {
         this.id = config.Id;
         this.items = config.Items;
         this.virtualize = config.Virtualize;
         this.filteredItems = [];
+        this.isBasicType = config.IsBasicType;
 
         if (config.Items != null) this.lowerListPropertyNames();
 
-        this.itemValProp = config.ValueProperty.toLowerCase();
-        this.itemDisplayProp = config.DisplayProperty.toLowerCase();
+        this.itemValProp = config.ValueProperty?.toLowerCase();
+        this.itemDisplayProp = config.DisplayProperty?.toLowerCase();
         this.searchUrl = config.SearchUrl;
         this.isServerFetching = this.searchUrl != null && this.searchUrl.trim() !== '';
         this.searchDelay = config.SearchDelay;
@@ -75,6 +75,7 @@ export class AutoComplete {
 
         this.clearSelectedItem();
 
+        // Anytime we click, we need to clear all autocomplete dropdowns.
         $(document).off('click.nt-autocompletes').on('click.nt-autocompletes', function (e) {
             self.clearMenus(e)
         });
@@ -90,7 +91,7 @@ export class AutoComplete {
 
             if (self.isServerFetching && !self.fetchServerOnLoad && self.items == null) return;
 
-            let val = $(this).val() // Get the input value
+            let val = $(this).val();
             if (!self.isServerFetching) {
                 self.searchList(val, !needToCloseDropdown)
             }
@@ -98,7 +99,7 @@ export class AutoComplete {
             if (!needToCloseDropdown) self.showDropdown();
 
         }).on('input', SEARCH_INPUT_SELECTOR, function () {
-            let val = $(this).val() // Get the input value
+            let val = $(this).val();
 
             if (!self.isServerFetching) {
                 self.searchList(val, true);
@@ -106,7 +107,7 @@ export class AutoComplete {
                 clearTimeout(self.serverDebounce); // Clear any previous timer
                 self.serverDebounce = setTimeout(function () {
                     self.fetchServerData(val); // Call the fetchServerData after the delay
-                }, self.searchDelay); // 300ms delay
+                }, self.searchDelay);
             }
         });
 
@@ -133,13 +134,11 @@ export class AutoComplete {
                     }
                 }
             }
-      
+
         })
 
         this.$dropdownMenu.on('click', DROPDOWN_ITEM_SELECTOR, function () {
-            let $el = $(this); // The selected item
-            self.selectItem($el);
-
+            self.selectItem($(this));
         });
 
         this.$dropdown.find(DROPDOWN_TOGGLE_SELECTOR).on('click', function () {
@@ -151,15 +150,15 @@ export class AutoComplete {
         this.$dropdown.find(CLEAR_BUTTON_SELECTOR).on('click', function () {
             self.clearSelectedItem();
             self.$searchInput.trigger('focus');
-        })
+        });
 
         if (this.virtualize) {
             this.$dropdown.on('shown.bs.dropdown', function () {
                 self.calculateItemHeight();
-            })
+            });
             this.$itemsContainer.on('scroll', function () {
                 self.onScroll();
-            })
+            });
 
             // These listeners will have to be created for each virtualized autocomplete on the page.
             $(document).on("visibilitychange", () => {
@@ -173,7 +172,6 @@ export class AutoComplete {
                 }
             });
         }
-
     }
 
     /**
@@ -233,11 +231,23 @@ export class AutoComplete {
 
 
         visibleItems.forEach((item, index) => {
-            if (!item.hasOwnProperty(valueProp)) throw new Error(`Could not find property of name '${valueProp}'`);
-            if (!item.hasOwnProperty(displayProp)) throw new Error(`Could not find property of name '${displayProp}'`);
+            if (item == null) return;
 
-            let val = item[valueProp];
-            let display = item[displayProp];
+            let val = '';
+            let display = '';
+
+            // If not an object (just string array for example) ignore value and display prop.
+            if (typeof item !== "object") {
+                val = item;
+                display = item;
+            } else {
+                if (!item.hasOwnProperty(valueProp)) throw new Error(`Could not find property of name '${valueProp}'`);
+                if (!item.hasOwnProperty(displayProp)) throw new Error(`Could not find property of name '${displayProp}'`);
+
+                val = item[valueProp];
+                display = item[displayProp];
+            }
+
 
             html += `<div class="dropdown-item py-1 d-flex justify-content-between ${DROPDOWN_ITEM_CLASS}" data-value="${val}" data-from-server="${isFromServer}" data-index="${startIndex + index}" style="cursor: pointer; ">
                                 <span class="nt-autocomplete-dropdown-item-text">${display}</span>
@@ -278,7 +288,10 @@ export class AutoComplete {
 
         this.debounceTimeout = setTimeout(() => {
             if (searchVersion === this.currentSearchVersion) {
-                this.filteredItems = this.items.filter(item => item[this.itemDisplayProp].toLowerCase().includes(search));
+                this.filteredItems = this.items.filter(item => {
+                    if (typeof item !== "object") return item.toLowerCase().includes(search);
+                    else return item[this.itemDisplayProp].toLowerCase().includes(search);
+                });
 
                 if (this.virtualize) {
                     this.renderVirtualizedItems(0, false);
@@ -303,10 +316,16 @@ export class AutoComplete {
 
         if ($el.attr('data-from-server') == 'false' || $el.attr('data-from-server') == false) {
             this.selectedItem = this.items[selectedIndex]
-            this.filteredItems = this.items.filter(item => item[this.itemDisplayProp] === displayVal);
+            this.filteredItems = this.items.filter(item => {
+                if (typeof item !== "object") return item === displayVal;
+                else return item[this.itemDisplayProp] === displayVal;
+            });
         } else {
             this.selectedItem = this.filteredItems[selectedIndex];
-            this.filteredItems = this.filteredItems.filter(item => item[this.itemDisplayProp] === displayVal)
+            this.filteredItems = this.filteredItems.filter(item => {
+                if (typeof item !== "object") return item === displayVal;
+                else return item[this.itemDisplayProp] === displayVal;
+            });
         }
 
         this.$searchInput.val(displayVal);
@@ -336,7 +355,7 @@ export class AutoComplete {
         this.$input.trigger('input');
         this.$input.trigger('change');
     }
-   
+
 
     /**
      * Fetches data from the server and updates the list.
@@ -468,6 +487,7 @@ export class AutoComplete {
     lowerListPropertyNames() {
         let self = this;
         this.items.forEach((obj, index) => {
+            if (typeof obj !== 'object') return;
             self.items[index] = Object.entries(obj).reduce((acc, [key, value]) => {
                 acc[key.toLowerCase()] = value; // Convert key to lowercase
                 return acc;
@@ -482,6 +502,7 @@ export class AutoComplete {
     lowerFilteredPropertyNames() {
         let self = this;
         this.filteredItems.forEach((obj, index) => {
+            if (typeof obj !== 'object') return;
             self.filteredItems[index] = Object.entries(obj).reduce((acc, [key, value]) => {
                 acc[key.toLowerCase()] = value; // Convert key to lowercase
                 return acc;
@@ -503,7 +524,6 @@ export class AutoComplete {
         return html;
     }
 }
-
 
 // Creates the object.
 if (window.testUI) {
