@@ -49,7 +49,7 @@ let val = $("#MyFirstAutocomplete").val();
 | ```placeholder``` | string | null | The placeholder to display when nothing is selected or inputted. |
 | ```required``` | bool | false | Make this AutoComplete required in forms. |
 | ```search-delay``` | int | 150 | The time in milliseconds from when input is received to when the search is made. |
-| ```search-url``` | string | null | The URL (typically a controller action) to fetch data upon input. |
+| ```search-url``` | string | null | The URL (typically a controller action) to fetch data upon input.<br/>A parameter <code>string searchVal</code> is required in the controller method.<br/><sub>Ex: "/Home/SearchPeople"<br/></sub> |
 | ```size``` | small,<br/>medium,<br/>large | medium | The size of the rendered input. |
 | ```start-icon``` | string | null | Icon to show in front of input. Only accepts Bootstrap's Icon Web Font class name. <br/> For example: bi bi-microsoft |
 | ```value``` | string,<br/>int,<br/>object | null | The inital value given to the AutoComplete.<br/> Depending on the given ```items```, it can be a primitive or an object. |
