@@ -22,9 +22,10 @@ export class AutoComplete {
         this.items = config.Items;
         this.virtualize = config.Virtualize;
         this.filteredItems = [];
-        this.isBasicType = config.IsBasicType;
+        this.selectedDisplayVal = '';
 
-        if (config.Items != null) this.lowerListPropertyNames();
+        if (config.Value != null) this.defaultValue = config.Value;
+        if (config.Items != null) this.lowerObjectPropertyNames(this.items);
 
         this.itemValProp = config.ValueProperty?.toLowerCase();
         this.itemDisplayProp = config.DisplayProperty?.toLowerCase();
@@ -49,8 +50,6 @@ export class AutoComplete {
         }
 
         this.initializeListeners();
-
-        this.selectedDisplayVal = '';
     }
 
     /**
@@ -73,7 +72,11 @@ export class AutoComplete {
     initializeListeners() {
         let self = this;
 
-        this.clearSelectedItem();
+        if (this.defaultValue != null) {
+            this.setInitialValue();
+        } else {
+            this.clearSelectedItem();
+        }
 
         // Anytime we click, we need to clear all autocomplete dropdowns.
         $(document).off('click.nt-autocompletes').on('click.nt-autocompletes', function (e) {
@@ -82,7 +85,7 @@ export class AutoComplete {
 
         this.$dropdown.on('focusin', SEARCH_INPUT_SELECTOR, function (e) {
             let needToCloseDropdown = $(e.relatedTarget).hasClass(DROPDOWN_TOGGLE_CLASS) && self.$toggleButton.hasClass('show');
-            let isItemSelected = self.selectedDisplayVal != null && self.selectedDisplayVal != '';
+            let isItemSelected = self.isItemSelected;
 
             if (isItemSelected && !needToCloseDropdown) {
                 self.showDropdown()
@@ -172,6 +175,38 @@ export class AutoComplete {
                 }
             });
         }
+    }
+
+    /**
+     * Sets the inital value of the AutoComplete.
+     * @returns
+     */
+    setInitialValue() {
+        if (this.defaultValue == null) return;
+        if (Array.isArray(this.defaultValue)) return;
+
+        let defaultVal = this.defaultValue;
+        if (typeof this.defaultValue !== 'object') {
+            this.selectedDisplayVal = defaultVal;
+            this.$input.val(defaultVal);
+        } else {
+            this.lowerObjectPropertyNames(defaultVal);
+            let valueProp = this.itemValProp;
+            let displayProp = this.itemDisplayProp;
+            if (!defaultVal.hasOwnProperty(valueProp)) throw new Error(`Could not find property of name '${valueProp}'`);
+            if (!defaultVal.hasOwnProperty(displayProp)) throw new Error(`Could not find property of name '${displayProp}'`);
+
+            this.selectedDisplayVal = defaultVal[displayProp];
+            this.$input.val(defaultVal[valueProp])
+        }
+
+        this.selectedItem = defaultVal;
+        this.isItemSelected = true;
+
+        this.$searchInput.val(this.selectedDisplayVal);
+        this.$clearButton.removeClass('d-none');
+
+        this.renderListItems([defaultVal], false);
     }
 
     /**
@@ -378,11 +413,11 @@ export class AutoComplete {
                 if (searchVersion === self.currentSearchVersion && self.isDropdownOpen()) {
                     if (self.fetchServerOnLoad && self.items == null) {
                         self.items = response;
-                        self.lowerListPropertyNames();
+                        self.lowerObjectPropertyNames(self.items);
                     }
 
                     self.filteredItems = response;
-                    self.lowerFilteredPropertyNames()
+                    self.lowerObjectPropertyNames(self.filteredItems);
 
                     if (self.virtualize) {
                         self.renderVirtualizedItems(0, true);
@@ -480,35 +515,31 @@ export class AutoComplete {
         return "<div class=\"no-results-found\"><h5 class=\"dropdown-header\">No results found.</h5></div>";
     }
 
-    /**
-     * Transform each property name in the data list to lowercase. This is so we can look for
-     * properties in the list without having to worry about weird ajax property name returns.
-     */
-    lowerListPropertyNames() {
-        let self = this;
-        this.items.forEach((obj, index) => {
-            if (typeof obj !== 'object') return;
-            self.items[index] = Object.entries(obj).reduce((acc, [key, value]) => {
-                acc[key.toLowerCase()] = value; // Convert key to lowercase
-                return acc;
-            }, {});
-        });
+
+
+
+
+    lowerObjectPropertyNames(data) {
+        if (Array.isArray(data)) {
+            // If it's an array, process each object in the array
+            data.forEach(item => this.lowerObjectPropertyNames(item));
+        } else if (data && typeof data === 'object') {
+            // If it's a single object, process its keys
+            Object.keys(data).forEach(key => {
+                let lowerKey = key.toLowerCase();
+                if (lowerKey !== key) {
+                    data[lowerKey] = data[key];
+                    delete data[key];
+                }
+                // Recursively process nested objects
+                if (typeof data[lowerKey] === 'object' && data[lowerKey] !== null) {
+                    this.lowerObjectPropertyNames(data[lowerKey]);
+                }
+            });
+        }
+
     }
 
-    /**
-     * Transform each property name in the filtered data list to lowercase. This is so we can look for
-     * properties in the list without having to worry about weird ajax property name returns.
-     */
-    lowerFilteredPropertyNames() {
-        let self = this;
-        this.filteredItems.forEach((obj, index) => {
-            if (typeof obj !== 'object') return;
-            self.filteredItems[index] = Object.entries(obj).reduce((acc, [key, value]) => {
-                acc[key.toLowerCase()] = value; // Convert key to lowercase
-                return acc;
-            }, {});
-        });
-    }
 
     /**
      * Get the HTML shown for querying data.

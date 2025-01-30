@@ -42,6 +42,12 @@ namespace TestUI.Components.AutoComplete
         public string? ValueProperty { get; set; }
 
         /// <summary>
+        /// The inital value given to the AutoComplete. Depending on the given Items, it can be a primitive or an object.
+        /// </summary>
+        [JsonProperty]
+        public object Value { get; set; }
+
+        /// <summary>
         /// The placeholder to display when nothing is selected or inputted.
         /// </summary>
         public string? Placeholder { get; set; }
