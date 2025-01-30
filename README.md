@@ -1,3 +1,16 @@
+# Getting Started
+1. Install the TurnisUITest Nuget package.<br/>
+2. Add the following to your ```_ViewImports.cshtml```
+```
+@addTagHelper *, TestUI
+```
+3. Include the required stylesheet and script to your ```_Layout.cshtml``` inside of the ```<head>``` tag
+```
+<link rel="stylesheet" href="/_content/TurnisUITest/css/testui.css" asp-append-version="true"/> 
+<script type="module" src="/_content/TurnisUITest/js/Base.js"></script>
+```
+
+
 # Components
 [AutoComplete](#autocomplete)
 
