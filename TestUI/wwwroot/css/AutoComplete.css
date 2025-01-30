@@ -59,11 +59,44 @@
     padding-right: 5rem !important;
 }
 
-html[data-bs-theme="light"] .nt-autocomplete-dropdown-item:hover {
-    background-color: #eee !important;
+/* Adjusts logic for when to style validation */
+.was-validated .nt-autocomplete-value:valid ~ .nt-autocomplete-input-wrapper .nt-autocomplete-input {
+    border-color: var(--bs-form-valid-border-color);
+    background: none;
 }
+
+    .was-validated .nt-autocomplete-value:valid ~ .nt-autocomplete-input-wrapper .nt-autocomplete-input:focus {
+        box-shadow: 0 0 0 .25rem rgba(var(--bs-success-rgb),.25);
+    }
+
+.was-validated .nt-autocomplete-value:invalid ~ .nt-autocomplete-input-wrapper .nt-autocomplete-input {
+    border-color: var(--bs-form-invalid-border-color);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-position: right 2.5rem center;
+}
+
+    .was-validated .nt-autocomplete-value:invalid ~ .nt-autocomplete-input-wrapper .nt-autocomplete-input:focus {
+        box-shadow: 0 0 0 .25rem rgba(var(--bs-danger-rgb),.25);
+    }
+
+    html[data-bs-theme="light"] .nt-autocomplete-dropdown-item:hover {
+        background-color: #eee !important;
+    }
 
 .nt-autocomplete-dropdown-item-text {
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Use this instead of hidden input so required can happen. */
+.nt-autocomplete-value {
+    opacity: 0%;
+    position: absolute;
+    width: .5px;
+    height: 100%;
+    bottom: 0;
+    padding: 0;
+    border: none;
+    z-index: 0;
+    display: block;
 }

@@ -18,6 +18,7 @@ namespace TestUI.Components.AutoComplete
     public class AutoComplete(IHtmlHelper htmlHelper) : NtBaseTag(htmlHelper)
     {
 
+        /// <exclude />
         protected override string ClassName => nameof(AutoComplete);
 
 
@@ -60,6 +61,11 @@ namespace TestUI.Components.AutoComplete
         /// Disable the input and dropdown toggles.
         /// </summary>
         public bool Disabled { get; set; }
+
+        /// <summary>
+        /// Make this AutoComplete required in forms.
+        /// </summary>
+        public bool Required { get; set; }
 
         /// <summary>
         /// Icon to show in front of input. Only accepts Bootstrap's Icon Web Font class name.
