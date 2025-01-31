@@ -4,7 +4,7 @@
 @model AutoComplete
 
 <div class="dropdown nt-autocomplete-dropdown" id="AutoComplete_@Model.Id">
-    <input name="@Model.Id" id="@Model.Id" class="nt-autocomplete-value" tabindex="-1" required="@Model.Required"  />
+    <input name="@Model.Id" id="@Model.Id" class="nt-autocomplete-value" tabindex="-1" required="@Model.Required" />
 
     @if (Model.FloatingLabel)
     {
@@ -12,8 +12,14 @@
 
         <div class="form-floating d-flex align-items-center nt-autocomplete-input-wrapper">
             <input class="form-control dropdown-toggle nt-autocomplete-input" type="text" id="@Model.UniqueId"
-                   placeholder="@Model.Placeholder" disabled="@Model.Disabled"/>
-            <label for="@Model.UniqueId"><i class="@Model.StartIcon"></i> @Model.Label</label>
+                   placeholder="@Model.Placeholder" disabled="@Model.Disabled" />
+            <label for="@Model.UniqueId">
+                <i class="@Model.StartIcon"></i> @Model.Label
+                @if (Model.Required)
+                {
+                    <span class="text-danger">*</span>
+                }
+            </label>
             <button type="button" class="btn btn-sm shadow-bone nt-autocomplete-clear-button d-none" disabled="@Model.Disabled"><i class="bi bi-x-lg"></i></button>
             <button type="button" class="btn btn-sm shadow-none nt-autocomplete-toggle-button" disabled="@Model.Disabled"><i class="bi bi-chevron-down"></i></button>
         </div>
@@ -22,7 +28,12 @@
     {
         @if (!string.IsNullOrWhiteSpace(Model.Label))
         {
-            <label class="form-label" for="@Model.UniqueId">@Model.Label</label>
+            <label class="form-label" for="@Model.UniqueId">@Model.Label
+                @if (Model.Required)
+                {
+                    <span class="text-danger">*</span>
+                }
+            </label>
         }
 
         <div class="d-none nt-autocomplete-hidden-toggle dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false" data-bs-reference="parent"></div>
@@ -34,7 +45,7 @@
             <input class="form-control @GetInputSize() nt-autocomplete-input" type="text" id="@Model.UniqueId"
                    placeholder="@Model.Placeholder" disabled="@Model.Disabled" />
             <button type="button" class="btn btn-sm shadow-bone nt-autocomplete-clear-button d-none" disabled="@Model.Disabled"><i class="bi bi-x-lg"></i></button>
-            <button type="button" class="btn btn-sm shadow-none nt-autocomplete-toggle-button"  disabled="@Model.Disabled"><i class="bi bi-chevron-down"></i></button>
+            <button type="button" class="btn btn-sm shadow-none nt-autocomplete-toggle-button" disabled="@Model.Disabled"><i class="bi bi-chevron-down"></i></button>
         </div>
 
     }

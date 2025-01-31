@@ -30,7 +30,7 @@ namespace TestUI.Components.AutoComplete
         public object? Items { get; set; }
 
         /// <summary>
-        /// The property for which to each item will display.
+        /// The property each item will use as its display text.
         /// </summary>
         [JsonProperty]
         public string? DisplayProperty { get; set; }
