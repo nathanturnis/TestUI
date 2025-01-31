@@ -1,0 +1,58 @@
+.nt-select-dropdown-menu {
+    max-height: 330px;
+}
+
+.nt-select-list-content {
+    max-height: 315px;
+    overflow-y: auto;
+}
+
+.nt-select-dropdown-item {
+    cursor: pointer;
+}
+
+html[data-bs-theme="light"] .nt-select-dropdown-item:hover {
+    background-color: #eee !important;
+}
+
+.nt-select-dropdown-input {
+    cursor: pointer;
+    caret-color: transparent;
+}
+
+.nt-select-toggle-button {
+    position: absolute;
+    right: 7px;
+    border-radius: 9999px;
+}
+
+.nt-select-toggle-button:hover {
+    background-color: #e4e4e47d;
+}
+
+.nt-select-toggle-button:disabled, .nt-autocomplete-clear-button:disabled {
+    border: none;
+}
+
+.d-flex.show .nt-select-toggle-button > .bi::before {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    transition: transform 0.25s ease; /* Add transition */
+}
+
+.nt-select-toggle-button > .bi::before {
+    transition: transform 0.25s ease; /* Ensure transition applies when returning to the original state */
+}
+
+.nt-select-hidden-select {
+    opacity: 0%;
+    position: absolute;
+    width: .5px;
+    height: 100%;
+    bottom: 0;
+    padding: 0;
+    border: none;
+    z-index: 0;
+    display: block;
+}

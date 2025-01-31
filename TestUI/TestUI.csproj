@@ -23,4 +23,8 @@
 		<EmbeddedResource Include="wwwroot\**\*" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Content Remove="wwwroot\js\Select.js" />
+	</ItemGroup>
+
 </Project>
