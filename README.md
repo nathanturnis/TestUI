@@ -26,7 +26,7 @@
                  display-property="FirstName" />
 ```
 In the above example, we declare the AutoComplete that uses a ```List<People>``` as the data source. We specify the property name in the ```People``` class to use as the selected item's value (```Id```) and the text (```FirstName```) to show in the dropdown list.
-> [!NOTE]
+> [!IMPORTANT]
 > When <code>Items</code> is provided, a <code>value-property</code> must be specified.
 
 ### Getting the Selected Value
@@ -35,6 +35,41 @@ You can also grab the value in JavaScript like a normal ```<input />``` tag:
 ```
 let val = $("#MyFirstAutocomplete").val();
 ```
+
+### Server Searching
+By specifying a ```search-url```, the AutoComplete will send a request to the endpoint with the user's input. This request after the time specified in ```search-delay``` (150ms default). You can also specify to ```fetch-server-on-load``` to fetch the endpoint with a blank string right when the component is loaded on the page.
+```
+<nt-autocomplete id="MyFirstAutocomplete2"
+                 label="Person"
+                 placeholder="Select person"
+                 value-property="Id"
+                 display-property="FirstName"
+                 search-url="/Home/SearchPeople"
+                 virtualize />
+```
+
+<details>
+<summary>View Controller Method</summary>
+  The AutoComplete sends in 1 parameter of name <code>searchVal</code> with the user's input. We then can do filtering and return a <code>Json()</code> result with the list of the same datatype.
+  
+```
+public IActionResult SearchPeople(string? searchVal)
+{
+    if (searchVal == null) return Json(model);
+
+    Thread.Sleep(2000); // Simulate database call
+
+    searchVal= searchVal.Trim();
+    List<Person> result = model.Where(x => x.FirstName.Contains(searchVal, StringComparison.CurrentCultureIgnoreCase)).ToList();
+    // or do some db calls with filtering ...
+
+    return Json(result);
+}
+```
+</details>
+
+> [!TIP]
+> Increasing ```search-delay``` and enabling virtualization with ```virtualize``` can help improve performance.
 
 ### Parameters
 | Parameter Name  | Type | Default | Description |
