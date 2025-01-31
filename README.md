@@ -16,6 +16,13 @@
 
 
 ## AutoComplete
+<details>
+  <summary>Demo</summary>
+  
+  <img src="./AutoComplete-Demo1.gif" width="40%" height="40%"/>
+  
+</details>
+
 ### Usage
 ```
 <nt-autocomplete id="MyFirstAutocomplete"
