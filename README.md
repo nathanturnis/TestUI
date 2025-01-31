@@ -19,7 +19,7 @@
 <details>
   <summary>Demo</summary>
   
-  <img src="./AutoComplete-Demo1.gif" width="40%" height="40%"/>
+  <img src="./assets/AutoComplete-Demo1.gif" width="40%" height="40%"/>
   
 </details>
 
