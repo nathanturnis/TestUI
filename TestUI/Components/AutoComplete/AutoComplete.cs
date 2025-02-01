@@ -45,7 +45,7 @@ namespace TestUI.Components.AutoComplete
         /// The inital value given to the AutoComplete. Depending on the given Items, it can be a primitive or an object.
         /// </summary>
         [JsonProperty]
-        public object Value { get; set; }
+        public object? Value { get; set; }
 
         /// <summary>
         /// The placeholder to display when nothing is selected or inputted.
@@ -152,6 +152,9 @@ namespace TestUI.Components.AutoComplete
 
             ((IViewContextAware)_html).Contextualize(ViewContext);
             output.TagName = "div";
+            output.Attributes.TryGetAttribute("class", out var classes);
+            output.Attributes.SetAttribute("class", $"dropdown nt-autocomplete-dropdown {classes?.Value}");
+            output.Attributes.SetAttribute("id", $"AutoComplete_{Id}");
             output.TagMode = TagMode.StartTagAndEndTag;
 
             UniqueId = context.UniqueId;
