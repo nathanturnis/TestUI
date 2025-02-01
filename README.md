@@ -83,6 +83,7 @@ public IActionResult SearchPeople(string? searchVal)
 | ------------- | ------------- | ------------- | ------------- |
 | ```disabled``` | bool | false | Disable the input and dropdown toggles. |
 | ```display-property``` | string | null | The property each item will use as its display text. |
+| ```dropdown-size``` | int | 330 | The maxium size of the rendered dropdown in pixels. |
 | ```fetch-server-on-load``` | bool | false | When the component is initialized, a call is made to ```search-url``` with an empty value. |
 | ```floating-label``` | bool | false | Use Bootstrap's floating labels. A label and placeholder is required. |
 | ```id```  | string | null | The ID to for the AutoComplete. Used to grab the value. |
