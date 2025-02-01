@@ -49,6 +49,9 @@ namespace TestUI.Components.Select
 
             ((IViewContextAware)_html).Contextualize(ViewContext);
             output.TagName = "div";
+            output.Attributes.TryGetAttribute("class", out var classes);
+            output.Attributes.SetAttribute("class", $"dropdown nt-select-dropdown {classes?.Value}");
+            output.Attributes.SetAttribute("id", $"NtSelect_{Id}");
 
             UniqueId = context.UniqueId;
 

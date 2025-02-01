@@ -42,7 +42,7 @@ export class Select {
 
     selectItem($el) {
 
-        $(`#${this.id} option:first`).val($el.text().trim());
+        $(`#${this.id} option:first`).val($el.attr("data-value"));
         console.log($(`#${this.id}`).val());
 
         this.$displayInput.val($el.text().trim());
