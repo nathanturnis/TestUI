@@ -111,6 +111,12 @@ namespace TestUI.Components.AutoComplete
         [JsonProperty]
         public bool Virtualize { get; set; }
 
+        /// <summary>
+        /// The maxium size of the rendered dropdown in pixels.
+        /// Default 330
+        /// </summary>
+        public int DropdownSize { get; set; } = 330;
+
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             if (Id == null)
@@ -134,15 +140,7 @@ namespace TestUI.Components.AutoComplete
                         throw new ArgumentNullException(nameof(ValueProperty), "Must provide a value property.");
 
                     if (string.IsNullOrWhiteSpace(DisplayProperty))
-                        DisplayProperty = ValueProperty;
-
-                    var listType = Items.GetType().GetGenericArguments().Single();
-
-                    if (listType.GetProperty(ValueProperty) == null)
-                        throw new ArgumentException(paramName: nameof(ValueProperty), message: $"Could find property of name {ValueProperty} in type {listType}");
-
-                    else if (listType.GetProperty(DisplayProperty) == null)
-                        throw new ArgumentException(paramName: nameof(DisplayProperty), message: $"Could find property of name {DisplayProperty} in type {listType}");
+                        DisplayProperty = ValueProperty;  
                 }
             }
 

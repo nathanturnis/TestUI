@@ -50,6 +50,7 @@ export class AutoComplete {
         }
 
         this.initializeListeners();
+
     }
 
     /**
@@ -276,11 +277,9 @@ export class AutoComplete {
                 val = item;
                 display = item;
             } else {
-                if (!item.hasOwnProperty(valueProp)) throw new Error(`Could not find property of name '${valueProp}'`);
-                if (!item.hasOwnProperty(displayProp)) throw new Error(`Could not find property of name '${displayProp}'`);
-
-                val = item[valueProp];
-                display = item[displayProp];
+                // This gets the proper value, even if a nested object exists.
+                val = valueProp.split('.').reduce((obj, key) => obj?.[key], item);
+                display = displayProp.split('.').reduce((obj, key) => obj?.[key], item);
             }
 
 

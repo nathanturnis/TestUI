@@ -2,12 +2,7 @@
     display: none;
 }
 
-.nt-autocomplete-dropdown-menu {
-    max-height: 330px;
-}
-
 .nt-autocomplete-list-content {
-    max-height: 315px;
     overflow-y: auto;
 }
 
