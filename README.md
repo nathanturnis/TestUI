@@ -16,6 +16,7 @@
 
 
 ## AutoComplete
+**An input that allows users to search and select from a list of items.**
 <details>
   <summary>Demo</summary>
   
