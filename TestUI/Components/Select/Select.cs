@@ -56,6 +56,14 @@ namespace TestUI.Components.Select
         /// </summary>
         public ComponentSize Size { get; set; } = ComponentSize.Medium;
 
+        /// <summary>
+        /// The maxium size of the rendered dropdown in pixels.
+        /// Default 400
+        /// </summary>
+        public int DropdownSize { get; set; } = 400;
+
+
+        /// <exclude />
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
 

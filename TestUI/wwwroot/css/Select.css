@@ -1,9 +1,4 @@
-.nt-select-dropdown-menu {
-    max-height: 330px;
-}
-
-.nt-select-list-content {
-    max-height: 315px;
+.nt-select-list-content {;
     overflow-y: auto;
 }
 
@@ -89,6 +84,12 @@ html[data-bs-theme="light"] .nt-select-dropdown-item:hover {
 
 .nt-select-optgroup-label ~ .nt-select-dropdown-item {
     padding-left: 1.75rem;
+}
+
+.nt-select-optgroup[data-disabled="true"] .nt-select-dropdown-item, .nt-select-optgroup[data-disabled="true"] .nt-select-optgroup-label {
+    color: var(--bs-dropdown-link-disabled-color);
+    background-color: transparent;
+    pointer-events: none !important;
 }
 
 .nt-select-hidden-select {

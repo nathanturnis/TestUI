@@ -47,8 +47,8 @@ else
 
 
 
-<div class="dropdown-menu w-100 shadow-sm nt-select-dropdown-menu">
-    <div class="nt-select-list-content" tabindex="-1">
+<div class="dropdown-menu w-100 shadow-sm nt-select-dropdown-menu" style="max-height: @(Model.DropdownSize)px;">
+    <div class="nt-select-list-content" style="max-height: @(Model.DropdownSize - 15)px;" tabindex="-1">
         @Model.ChildContent
     </div>
 </div>
