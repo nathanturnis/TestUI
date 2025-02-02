@@ -12,7 +12,8 @@
 
 
 # Components
-[AutoComplete](#autocomplete)
+[AutoComplete](#autocomplete) <br />
+[Select](#select)
 
 
 ## AutoComplete
@@ -45,7 +46,7 @@ let val = $("#MyFirstAutocomplete").val();
 ```
 
 ### Server Searching
-By specifying a ```search-url```, the AutoComplete will send a request to the endpoint with the user's input. This request after the time specified in ```search-delay``` (150ms default). You can also specify to ```fetch-server-on-load``` to fetch the endpoint with a blank string right when the component is loaded on the page.
+By specifying a ```search-url```, the AutoComplete will send a request to the endpoint with the user's input. This request is after the time specified in ```search-delay``` (150ms default). You can also specify to ```fetch-server-on-load``` to fetch the endpoint with a blank string right when the component is loaded on the page.
 ```
 <nt-autocomplete id="MyFirstAutocomplete2"
                  label="Person"
@@ -58,7 +59,7 @@ By specifying a ```search-url```, the AutoComplete will send a request to the en
 
 <details>
 <summary>View Controller Method</summary>
-  The AutoComplete sends in 1 parameter of name <code>searchVal</code> with the user's input. We then can do filtering and return a <code>Json()</code> result with the list of the same datatype.
+  The AutoComplete sends in 1 parameter of name <code>searchVal</code> with the user's input. We then can do filtering and return a <code>Json()</code> result with the list of the same data type.
   
 ```
 public IActionResult SearchPeople(string? searchVal)
@@ -101,11 +102,52 @@ public IActionResult SearchPeople(string? searchVal)
 | ```virtualize``` | bool | false | Virtualizes the list so only visible items are rendered to improve performance on large datasets. |
 
 
+## Select
+**An input that allows users to select from a list of items.**
 
+### Usage
+```
+<nt-select id="MySelect" label="Person" placeholder="Select a person...">
+    @foreach(var person in Model.People) {
+        <nt-select-item value="@person.Id">@person.FirstName @person.LastName</nt-select-item>
+    }
+</nt-select>
+```
+The syntax resembles a regular HTML ```<select>``` tag. We can provide a ```placeholder``` string instead of a hidden select item for a non-floating select. 
 
+```
+<nt-select id="MySelect" label="Person" placeholder="Select a person...">
+    @foreach(var person in Model.People) {
+        <nt-select-item selected="@(person.Id == 3)" value="@person.Id">@person.FirstName @person.LastName</nt-select-item>
+    }
+</nt-select>
+```
+Here, we specify the default selected item.
 
-
-
+### Getting the Selected Value
+The selected value will be serialized in a form with the name based on the required ```id``` property.<br/>
+You can also grab the value in JavaScript like a normal ```<select>``` tag:
+```
+let val = $("#MyFirstAutocomplete").val();
+```
+### Grouping Items
+You can also group items together.
+```
+<nt-select id="MySelect" label="Food" placeholder="Select a food...">
+    <nt-select-optgroup label="Fruits">
+        <nt-select-item value="@("Apple")">Apple</nt-select-item>
+        <nt-select-item value="@("Banana")">Banana</nt-select-item>
+        <nt-select-item value="@("Orange")">Orange</nt-select-item>
+        <nt-select-item value="@("Watermelon")">Watermelon</nt-select-item>
+    </nt-select-optgroup>
+    <nt-select-optgroup label="Vegetables">
+        <nt-select-item value="@("Broccoli")">Broccoli</nt-select-item>
+        <nt-select-item value="@("Carrot")">Carrot</nt-select-item>
+        <nt-select-item value="@("Lettuce")">Lettuce</nt-select-item>
+        <nt-select-item value="@("Potato")">Potato</nt-select-item>
+    </nt-select-optgroup>
+</nt-select>
+```
 
 
 
