@@ -194,11 +194,9 @@ export class AutoComplete {
             this.lowerObjectPropertyNames(defaultVal);
             let valueProp = this.itemValProp;
             let displayProp = this.itemDisplayProp;
-            if (!defaultVal.hasOwnProperty(valueProp)) throw new Error(`Could not find property of name '${valueProp}'`);
-            if (!defaultVal.hasOwnProperty(displayProp)) throw new Error(`Could not find property of name '${displayProp}'`);
 
-            this.selectedDisplayVal = defaultVal[displayProp];
-            this.$input.val(defaultVal[valueProp])
+            this.selectedDisplayVal = displayProp.split('.').reduce((obj, key) => obj?.[key], defaultVal);
+            this.$input.val(valueProp.split('.').reduce((obj, key) => obj?.[key], defaultVal));
         }
 
         this.selectedItem = defaultVal;
@@ -351,14 +349,15 @@ export class AutoComplete {
         if ($el.attr('data-from-server') == 'false' || $el.attr('data-from-server') == false) {
             this.selectedItem = this.items[selectedIndex]
             this.filteredItems = this.items.filter(item => {
+                //valueProp.split('.').reduce((obj, key) => obj?.[key], item);
                 if (typeof item !== "object") return item === displayVal;
-                else return item[this.itemDisplayProp] === displayVal;
+                else return this.itemDisplayProp.split('.').reduce((obj, key) => obj?.[key], item) === displayVal;
             });
         } else {
             this.selectedItem = this.filteredItems[selectedIndex];
             this.filteredItems = this.filteredItems.filter(item => {
                 if (typeof item !== "object") return item === displayVal;
-                else return item[this.itemDisplayProp] === displayVal;
+                else return this.itemDisplayProp.split('.').reduce((obj, key) => obj?.[key], item) === displayVal;
             });
         }
 
@@ -513,10 +512,6 @@ export class AutoComplete {
     getNoResultsFoundHtml() {
         return "<div class=\"no-results-found\"><h5 class=\"dropdown-header\">No results found.</h5></div>";
     }
-
-
-
-
 
     lowerObjectPropertyNames(data) {
         if (Array.isArray(data)) {

@@ -11,7 +11,7 @@ const DROPDOWN_TOGGLE_SELECTOR = "." + DROPDOWN_TOGGLE_CLASS;
 const DROPDOWN_ITEM_CLASS = "nt-select-dropdown-item";
 const DROPDOWN_ITEM_SELECTOR = "." + DROPDOWN_ITEM_CLASS;
 
-const DEFAULT_ITEM_HEIGHT = 32;
+const DROPDOWN_TOGGLER_SELECTOR = ".nt-select-dropdown-toggler";
 
 export class Select {
     constructor(config) {
@@ -20,6 +20,8 @@ export class Select {
 
         this.initializeElements();
         this.initalizeListeners();
+        this.clearSelectedItem();
+        this.findDefaultSelectedItem();
     }
 
     /**
@@ -38,16 +40,45 @@ export class Select {
         this.$dropdown.on('click', DROPDOWN_ITEM_SELECTOR, function () {
             self.selectItem($(this));
         });
+
+
+        // Accessibility stuff
+        this.$dropdown.on("keypress", DROPDOWN_ITEM_SELECTOR, function (e) {
+            let key = e.which;
+            if (key == 13) {
+                self.selectItem($(this));
+                self.$dropdown.find(DROPDOWN_TOGGLER_SELECTOR).dropdown('toggle');
+            }
+        });
+
+        this.$displayInput.on("keypress", function (e) {
+            e.preventDefault();
+            let key = e.which;
+            if (key == 13) {
+                self.$dropdown.find(DROPDOWN_TOGGLER_SELECTOR).dropdown('toggle');
+            }
+        });
     }
 
     selectItem($el) {
 
         $(`#${this.id} option:first`).val($el.attr("data-value"));
-        console.log($(`#${this.id}`).val());
 
         this.$displayInput.val($el.text().trim());
         this.$dropdown.find('.check-icon').hide();
         $el.find('.check-icon').show();
+    }
+
+    clearSelectedItem() {
+        this.$displayInput.val('');
+        this.$dropdown.find('.check-icon').hide();
+    }
+
+    findDefaultSelectedItem() {
+        let $selectedElement = this.$itemsContainer.find(`${DROPDOWN_ITEM_SELECTOR}[data-selected='True']`).first();
+        if ($selectedElement.length == 1) {
+            this.selectItem($selectedElement);
+        }
     }
 
 }

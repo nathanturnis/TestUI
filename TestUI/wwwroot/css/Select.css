@@ -21,18 +21,24 @@ html[data-bs-theme="light"] .nt-select-dropdown-item:hover {
 }
 
 .nt-select-toggle-button {
-    position: absolute;
+    position: absolute !important;
     right: 7px;
     border-radius: 9999px;
+    z-index: 100 !important;
 }
 
 .nt-select-toggle-button:hover {
     background-color: #e4e4e47d;
 }
 
-.nt-select-toggle-button:disabled, .nt-autocomplete-clear-button:disabled {
-    border: none;
+.nt-select-toggle-button:focus {
+    border-color: var(--bs-border-color);
 }
+
+
+    .nt-select-toggle-button:disabled, .nt-autocomplete-clear-button:disabled {
+        border: none;
+    }
 
 .d-flex.show .nt-select-toggle-button > .bi::before {
     -webkit-transform: rotate(180deg);
@@ -43,6 +49,46 @@ html[data-bs-theme="light"] .nt-select-dropdown-item:hover {
 
 .nt-select-toggle-button > .bi::before {
     transition: transform 0.25s ease; /* Ensure transition applies when returning to the original state */
+}
+
+.nt-select-start-icon {
+    position: absolute !important;
+    left: 10px;
+    z-index: 100;
+}
+
+    .nt-select-start-icon + .nt-select-dropdown-input {
+        padding-left: 2.25rem;
+    }
+
+.input-group .nt-select-dropdown {
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    position: relative;
+}
+
+    .input-group .nt-select-dropdown:not(:last-child) .nt-select-dropdown-toggler .nt-select-dropdown-input {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .input-group .nt-select-dropdown:not(:first-child) .nt-select-dropdown-toggler .nt-select-dropdown-input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .input-group .nt-select-dropdown label {
+        z-index: 10 !important;
+    }
+
+
+    .input-group .nt-select-dropdown .nt-select-dropdown-input:focus {
+        z-index: 5;
+    }
+
+.nt-select-optgroup-label ~ .nt-select-dropdown-item {
+    padding-left: 1.75rem;
 }
 
 .nt-select-hidden-select {

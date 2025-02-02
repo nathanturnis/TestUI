@@ -87,7 +87,10 @@
 }
 
 .input-group .nt-autocomplete-dropdown {
-    flex: auto;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+    position: relative;
 }
 
 .input-group .nt-autocomplete-dropdown:not(:last-child) .nt-autocomplete-input {

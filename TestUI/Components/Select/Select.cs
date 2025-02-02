@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Newtonsoft.Json;
+using TestUI.UI;
 
 namespace TestUI.Components.Select
 {
@@ -13,7 +14,7 @@ namespace TestUI.Components.Select
     /// <param name="htmlHelper"></param>
     [JsonObject(MemberSerialization.OptIn)]
     [HtmlTargetElement("nt-select")]
-    [RestrictChildren("nt-select-item")]
+    [RestrictChildren("nt-select-item", "hr", "nt-select-optgroup")]
     public class Select(IHtmlHelper htmlHelper) : NtBaseTag(htmlHelper)
     {
         /// <exclude />
@@ -43,6 +44,17 @@ namespace TestUI.Components.Select
         /// Make this select required in forms.
         /// </summary>
         public bool Required { get; set; }
+
+        /// <summary>
+        /// Icon to show in front of input. Only accepts Bootstrap's Icon Web Font class name.
+        /// For example: bi bi-microsoft
+        /// </summary>
+        public string? StartIcon { get; set; }
+
+        /// <summary>
+        /// The size of the rendered input.
+        /// </summary>
+        public ComponentSize Size { get; set; } = ComponentSize.Medium;
 
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
