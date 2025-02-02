@@ -36,7 +36,7 @@ export class Select {
     initalizeListeners() {
         let self = this;
 
-        this.$dropdown.on('click', DROPDOWN_ITEM_SELECTOR, function () {
+        this.$dropdownMenu.on('click', DROPDOWN_ITEM_SELECTOR, function () {
             self.selectItem($(this));
         });
 
@@ -64,7 +64,6 @@ export class Select {
      * @param {any} $el the item to select
      */
     selectItem($el) {
-
         $(`#${this.id} option:first`).val($el.attr("data-value"));
         this.$displayInput.val($el.text().trim());
         this.$dropdown.find('.check-icon').hide();

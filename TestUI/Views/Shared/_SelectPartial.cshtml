@@ -3,7 +3,7 @@
 
 @model Select
 
-<select class="nt-select-hidden-select" id="@Model.Id" name="@Model.Id" required="@Model.Required">
+<select class="nt-select-hidden-select" id="@Model.Id" disabled="@Model.Disabled" name="@Model.Id" required="@Model.Required">
     <option value="" selected></option>
 </select>
 
@@ -11,14 +11,14 @@
 {
     <div class="form-floating d-flex align-items-center nt-select-dropdown-toggler" data-bs-toggle="dropdown">
         <input class="form-control nt-select-dropdown-input dropdown-toggle shadow-none" readonly type="text" aria-expanded="false"
-               placeholder="@Model.Placeholder" id="@Model.UniqueId" />
+               placeholder="@Model.Placeholder" id="@Model.UniqueId" disabled="@Model.Disabled"/>
         <label for="@Model.UniqueId"><i class="@Model.StartIcon"></i> @Model.Label
             @if (Model.Required)
             {
                 <span class="text-danger">*</span>
             }
         </label>
-        <button type="button" class="btn btn-sm shadow-none nt-select-toggle-button"><i class="bi bi-chevron-down"></i></button>
+        <button type="button" class="btn btn-sm shadow-none nt-select-toggle-button" disabled="@Model.Disabled"><i class="bi bi-chevron-down"></i></button>
     </div>
 
 }
@@ -40,8 +40,8 @@ else
             <div class="nt-select-start-icon"><i class="@Model.StartIcon"></i></div>
         }
         <input class="form-control @GetInputSize() nt-select-dropdown-input dropdown-toggle shadow-none h-100" readonly type="text"
-               placeholder="@Model.Placeholder" id="@Model.UniqueId" />
-        <button type="button" class="btn btn-sm shadow-none nt-select-toggle-button"><i class="bi bi-chevron-down"></i></button>
+               placeholder="@Model.Placeholder" id="@Model.UniqueId" disabled="@Model.Disabled" />
+        <button type="button" class="btn btn-sm shadow-none nt-select-toggle-button" disabled="@Model.Disabled"><i class="bi bi-chevron-down"></i></button>
     </div>
 }
 

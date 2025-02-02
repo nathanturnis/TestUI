@@ -25,6 +25,11 @@ namespace TestUI.Components.Select
         public IHtmlContent? ChildContent { get; set; }
 
         /// <summary>
+        /// Disabled the select.
+        /// </summary>
+        public bool Disabled { get; set; }
+
+        /// <summary>
         /// The placeholder to display when nothing is selected or inputted.
         /// </summary>
         public string? Placeholder { get; set; }

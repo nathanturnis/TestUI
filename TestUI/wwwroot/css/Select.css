@@ -1,4 +1,4 @@
-.nt-select-list-content {;
+.nt-select-list-content {
     overflow-y: auto;
 }
 
@@ -10,7 +10,7 @@ html[data-bs-theme="light"] .nt-select-dropdown-item:hover {
     background-color: #eee !important;
 }
 
-.nt-select-dropdown-input {
+.nt-select-dropdown-input:not([disabled]) {
     cursor: pointer;
     caret-color: transparent;
 }
