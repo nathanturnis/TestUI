@@ -88,7 +88,7 @@ public IActionResult SearchPeople(string? searchVal)
 | ```dropdown-size``` | int | 330 | The maxium size of the rendered dropdown in pixels. |
 | ```fetch-server-on-load``` | bool | false | When the component is initialized, a call is made to ```search-url``` with an empty value. |
 | ```floating-label``` | bool | false | Use Bootstrap's floating labels. A label and placeholder is required. |
-| ```id```  | string | null | The ID to for the AutoComplete. Used to grab the value. |
+| ```id```  | string | null | The ID to use for the AutoComplete. Used to grab the value. |
 | ```items``` | ```IEnumerable``` of string,<br/> int,<br/> object | null | A list of items to bind this AutoComplete to.<br/> Required when no ```search-url``` is defined. |
 | ```label``` | string | null | The label for the input. |
 | ```placeholder``` | string | null | The placeholder to display when nothing is selected or inputted. |
@@ -149,11 +149,33 @@ You can also group items together.
 </nt-select>
 ```
 
+### Parameters
+```<nt-select>```
+| Parameter Name  | Type | Default | Description |
+| ------------- | ------------- | ------------- | ------------- |
+| ```disabled``` | bool | false | Disable the select and dropdown toggles. |
+| ```dropdown-size``` | int | 400 | The maxium size of the rendered dropdown in pixels. |
+| ```floating-label``` | bool | false | Use Bootstrap's floating labels. A label and placeholder is required. |
+| ```id```  | string | null | The ID to use for the Select. Used to grab the value. |
+| ```label``` | string | null | The label for the input. |
+| ```placeholder``` | string | null | The placeholder to display when nothing is selected or inputted. |
+| ```required``` | bool | false | Make this AutoComplete required in forms. |
+| ```size``` | small,<br/>medium,<br/>large | medium | The size of the rendered input. |
+| ```start-icon``` | string | null | Icon to show in front of input. Only accepts Bootstrap's Icon Web Font class name. <br/> For example: bi bi-microsoft |
 
+```<nt-select-item>```
+| Parameter Name  | Type | Default | Description |
+| ------------- | ------------- | ------------- | ------------- |
+| ```disabled``` | bool | false | Disables the item from being selected. |
+| ```hidden``` | bool | false | Hides the item from the list. |
+| ```id```  | string | null | ID for this item. |
+| ```selected``` | bool | false | This item is selected by defualt. |
+| ```value```  | object | null | The value of this item. |
 
-
-
-
-
+```<nt-select-optgroup>```
+| Parameter Name  | Type | Default | Description |
+| ------------- | ------------- | ------------- | ------------- |
+| ```disabled``` | bool | false | Disable the group and all of the items in it. |
+| ```label``` | string | null | The title for this item group. |
 
 
