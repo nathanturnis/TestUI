@@ -117,6 +117,13 @@ namespace TestUI.Components.AutoComplete
         /// </summary>
         public int DropdownSize { get; set; } = 330;
 
+        /// <summary>
+        /// Allows a custom value to be entered alongside suggested items in the dropdown.
+        /// </summary>
+        [JsonProperty]
+        public bool AllowCustomValue { get; set; }
+
+        /// <exclude />
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             if (Id == null)

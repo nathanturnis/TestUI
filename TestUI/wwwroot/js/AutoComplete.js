@@ -32,6 +32,7 @@ export class AutoComplete {
         this.searchUrl = config.SearchUrl;
         this.isServerFetching = this.searchUrl != null && this.searchUrl.trim() !== '';
         this.searchDelay = config.SearchDelay;
+        this.allowCustomValue = config.AllowCustomValue;
 
         this.initializeElements()
 
@@ -50,7 +51,6 @@ export class AutoComplete {
         }
 
         this.initializeListeners();
-
     }
 
     /**
@@ -105,6 +105,16 @@ export class AutoComplete {
         }).on('input', SEARCH_INPUT_SELECTOR, function () {
             let val = $(this).val();
 
+            if (self.allowCustomValue) {
+                self.$input.val(val);
+
+                if (!val) {
+                    self.$clearButton.addClass('d-none');
+                } else {
+                    self.$clearButton.removeClass('d-none');
+                }
+            }
+
             if (!self.isServerFetching) {
                 self.searchList(val, true);
             } else {
@@ -116,6 +126,8 @@ export class AutoComplete {
         });
 
         this.$dropdown.on('hide.bs.dropdown', function () {
+            if (self.allowCustomValue) return;
+
             if (self.isItemSelected) {
                 let selectedDisplayVal = self.selectedDisplayVal;
                 let searchVal = self.$searchInput.val();
@@ -253,10 +265,15 @@ export class AutoComplete {
      */
     renderListItems(visibleItems, isFromServer, startIndex = 0) {
         if (visibleItems.length <= 0) {
-            this.$itemsContainer.html(this.getNoResultsFoundHtml());
+            if (this.allowCustomValue) {
+                this.$dropdownMenu.addClass("invisible")
+            } else {
+                this.$itemsContainer.html(this.getNoResultsFoundHtml());
+            }
             return;
         }
 
+        this.$dropdownMenu.removeClass("invisible");
         let html = ``;
         let valueProp = this.itemValProp;
         let displayProp = this.itemDisplayProp;
@@ -397,6 +414,7 @@ export class AutoComplete {
      */
     fetchServerData(val, showDropdown = true) {
         let self = this;
+        this.$dropdownMenu.removeClass("invisible");
         this.$dropdownMenu.find(ITEMS_CONTAINER_SELECTOR).html(this.getLoadingHtml())
         if (showDropdown) self.showDropdown();
 
@@ -408,7 +426,7 @@ export class AutoComplete {
             dataType: "json", // Expected response type
             data: { searchVal: val },
             success: function (response) {
-                if (searchVersion === self.currentSearchVersion && self.isDropdownOpen()) {
+                if (searchVersion === self.currentSearchVersion) {
                     if (self.fetchServerOnLoad && self.items == null) {
                         self.items = response;
                         self.lowerObjectPropertyNames(self.items);
@@ -423,7 +441,6 @@ export class AutoComplete {
                         self.renderListItems(self.filteredItems, true);
                     }
 
-                    if (showDropdown) self.showDropdown();
                 }
             },
             error: function (xhr, status, error) {
